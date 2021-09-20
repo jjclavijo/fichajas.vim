@@ -9,6 +9,14 @@
 :nnoremap <C-t><C-o> :call zettel#review_links()<CR>
 :nnoremap <C-t><C-t><C-t> :call zettel#set_link()<CR>
 
+:nnoremap zzo :call zettel#open_tag()<CR>
+:nnoremap zzl :call zettel#review_links()<CR>
+:nnoremap zzy :call zettel#copy_this_zettel_name()<CR>
+
+:nnoremap zzb :call zettel#fzbacklinks()<CR>
+
+:nnoremap zzf :call zettel#fzlinks()<CR>
+
 command NewZettel execute 'new' . zettel#get_tsname().'.md'
 
 " unite zotero citation
@@ -41,5 +49,35 @@ nnoremap <silent>[unite]cp :<C-u>Unite -default-action=yank citation/your_source
 nnoremap <silent>[unite]cs :<C-u>Unite  -default-action=yank  citation/key:<C-R><C-W><cr>
 vnoremap <silent>[unite]cs :<C-u>exec "Unite  -default-action=start citation/key:" . escape(@*,' ') <cr>
 nnoremap <silent>[unite]cx :<C-u>exec "Unite  -default-action=start citation/key:" . escape(input('Search Key : '),' ') <cr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

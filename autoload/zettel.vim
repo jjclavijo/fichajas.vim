@@ -275,3 +275,48 @@ func MyMenuFilter(id, key)
   " No shortcut, pass to generic filter
   return popup_filter_menu(a:id, a:key)
 endfunc
+
+function zettel#copy_this_zettel_name()
+  call setreg('"', '[[' . expand('%:t:r') . ']]' )
+endfunction
+
+" For inserting backlinks and searching for links
+" TODO opening backlinks and foward links and ...
+
+function InsertBacklink(result)
+  if len(a:result) == 0
+    return
+  endif
+  let filePos = split(a:result, ':')
+  exec 'normal! o[[' . l:filePos[0] . ']] ' . l:filePos[1]
+endfun
+
+function zettel#fzbacklinks()
+  call fzf#run(
+      \fzf#wrap(
+      \{ 'source': 'rg -l "\[\['.expand('%:t:r').'\]\]" | xargs /usr/bin/rg -H --no-heading ''^# '' ',
+      \  'sink': function('InsertBacklink'), 
+      \  'options': '-m -e --ansi --phony --reverse 
+                    \--bind "ctrl-a:select-all" 
+                    \--bind "change:reload(rg -l "\[\['.expand('%:t:r').'\]\]" 
+                             \| xargs /usr/bin/rg -i -l {q}  
+                             \| xargs /usr/bin/rg -H --no-heading ''^# '' )" 
+                    \--preview ''rg -i --pretty --context 2 {q} 
+                                \"$(echo {} | sed ''"''s/:.*$//g''"'' )"''' 
+      \}))
+endfunction
+
+function zettel#fzlinks()
+  call fzf#run(
+      \fzf#wrap(
+      \{ 'source': 'rg -l ".md" | xargs /usr/bin/rg -H --no-heading ''^# '' ',
+      \  'sink': function('InsertBacklink'), 
+      \  'options': '-m -e --ansi --phony --reverse 
+                    \--bind "ctrl-a:select-all" 
+                    \--bind "change:reload(rg -l ''.md'' 
+                             \| xargs /usr/bin/rg -i -l {q}  
+                             \| xargs /usr/bin/rg -H --no-heading ''^# '' )" 
+                    \--preview ''rg -i --pretty --context 2 {q} 
+                                \"$(echo {} | sed ''"''s/:.*$//g''"'' )"''' 
+      \}))
+endfunction
