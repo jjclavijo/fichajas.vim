@@ -309,7 +309,7 @@ function zettel#fzbacklinks()
                              \| {xargs /usr/bin/rg -i -l {q} || echo ''N/D''}
                                \| {xargs /usr/bin/rg -H --no-heading ''^# '' || echo ''N/D'' })" 
                     \--preview ''rg -i --pretty --context 2 {q} 
-                                \"$(echo {} | sed ''"''s/:.*$//g''"'' )"'' | fold -w 70' 
+                               \"$(echo {} | sed ''"''s/:.*$//g''"'' )" | fold -w 70''' 
       \}))
 endfunction
 
