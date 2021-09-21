@@ -282,11 +282,18 @@ endfunction
 
 " For inserting backlinks and searching for links
 " TODO opening backlinks and foward links and ...
+"
+" Search and link functions
 
 function InsertBacklink(result)
   if len(a:result) == 0
     return
   endif
+
+  if a:result == 'N/D'
+    return
+  endif
+
   let filePos = split(a:result, ':')
   exec 'normal! o[[' . l:filePos[0] . ']] ' . l:filePos[1]
 endfun
@@ -299,24 +306,24 @@ function zettel#fzbacklinks()
       \  'options': '-m -e --ansi --phony --reverse 
                     \--bind "ctrl-a:select-all" 
                     \--bind "change:reload(rg -l "\[\['.expand('%:t:r').'\]\]" 
-                             \| xargs /usr/bin/rg -i -l {q}  
-                             \| xargs /usr/bin/rg -H --no-heading ''^# '' )" 
+                             \| {xargs /usr/bin/rg -i -l {q} || echo ''N/D''}
+                               \| {xargs /usr/bin/rg -H --no-heading ''^# '' || echo ''N/D'' })" 
                     \--preview ''rg -i --pretty --context 2 {q} 
-                                \"$(echo {} | sed ''"''s/:.*$//g''"'' )"''' 
+                                \"$(echo {} | sed ''"''s/:.*$//g''"'' )"'' | fold -w 70' 
       \}))
 endfunction
 
 function zettel#fzlinks()
   call fzf#run(
       \fzf#wrap(
-      \{ 'source': 'rg -l ".md" | xargs /usr/bin/rg -H --no-heading ''^# '' ',
+      \{ 'source': 'fd .md | xargs /usr/bin/rg -H --no-heading ''^# '' ',
       \  'sink': function('InsertBacklink'), 
       \  'options': '-m -e --ansi --phony --reverse 
                     \--bind "ctrl-a:select-all" 
-                    \--bind "change:reload(rg -l ''.md'' 
-                             \| xargs /usr/bin/rg -i -l {q}  
-                             \| xargs /usr/bin/rg -H --no-heading ''^# '' )" 
+                    \--bind "change:reload(fd .md 
+                             \| {xargs /usr/bin/rg -i -l {q} || echo ''N/D''} 
+                               \| {xargs /usr/bin/rg -H --no-heading ''^# '' || echo ''N/D''})" 
                     \--preview ''rg -i --pretty --context 2 {q} 
-                                \"$(echo {} | sed ''"''s/:.*$//g''"'' )"''' 
+                                \"$(echo {} | sed ''"''s/:.*$//g''"'' )" | fold -w 70''' 
       \}))
 endfunction
