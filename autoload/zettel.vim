@@ -295,7 +295,7 @@ function InsertBacklink(result)
   endif
 
   let filePos = split(a:result, ':')
-  exec 'normal! o[[' . l:filePos[0] . ']] ' . l:filePos[1]
+  exec 'normal! o[[' . fnamemodify(l:filePos[0],':r') . ']] ' . l:filePos[1]
 endfun
 
 function zettel#fzbacklinks()
